@@ -1,12 +1,6 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
-  - repo: local
-    hooks:
-      - id: freeze
-        name: freeze
-        entry: pip freeze > requirements.txt
-        language: system
   - repo: https://github.com/psf/black
     rev: 23.3.0
     hooks:
