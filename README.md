@@ -9,3 +9,6 @@ source ./.venv/bin/activate
 pip install -r requirements.txt
 git checkout -b <好きなブランチ名>
 ```
+
+## 開発上の注意
+新しいパッケージを導入したら`pip freeze > requirements.txt`を必ず実行
