@@ -1,3 +1,6 @@
 from django.contrib import admin
+from .models import Customer, LaterList, Video
 
-# Register your models here.
+admin.site.register(Customer)
+admin.site.register(LaterList)
+admin.site.register(Video)
