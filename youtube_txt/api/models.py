@@ -24,5 +24,11 @@ class LaterList(models.Model):
     video_id = models.ForeignKey(Video, on_delete=models.CASCADE)
 
 
+class Headline(models.Model):
+    video_id = models.TextField()
+    timestamp = models.FloatField()
+    headline = models.TextField()
+
+
    
 
