@@ -1,5 +1,7 @@
 from youtube_transcript_api import YouTubeTranscriptApi
-from youtube_index import split_paragraph, identify_timestamp, transcript_to_index
+from youtube_index import split_paragraph
+from youtube_index import identify_timestamp
+from youtube_index import transcript_to_index
 
 
 # video_idを渡すと、対応する動画の字幕をとってくる関数
@@ -26,20 +28,23 @@ def videoid_to_index(video_id: str):
     prompt_transcript = ""
     prompt_transcript2 = ""
     for i, t in enumerate(transcript_list):
-        prompt_transcript += "start: " + str(t["start"]) + " text: " + t["text"] + ", "
-        prompt_transcript2 += t["text"] 
+        prompt_transcript += (
+            "start: " + str(t["start"]) +
+            " text: " + t["text"] + ", "
+        )
+        prompt_transcript2 += t["text"]
 
     splitted_transcript = split_paragraph(prompt_transcript2)
 
     time_and_script = identify_timestamp(transcript_list, splitted_transcript)
 
     # { “video”: dict
-    #     {“id”: 動画のid, (string) 
-    #     “url”: 動画のurl, (string) 
+    #     {“id”: 動画のid, (string)
+    #     “url”: 動画のurl, (string)
     #     “title”: 動画のタイトル (string) },
     #     “indices”: list<dict>   # 目次のリスト
     #         [ { “timestamp”: 時刻（text   10:55  など）
-    #         “headline”: GPTで生成した見出し   (string) 
+    #         “headline”: GPTで生成した見出し   (string)
     #     } ]
     #             “comments”:  list<dict>  　　# オプション。時刻リンクを含んだコメント
     #         [ { “text”: 時刻リンクを含むコメント本文 (string) } ]
@@ -49,17 +54,16 @@ def videoid_to_index(video_id: str):
 
     return {
         "video": {
-            "video_id": video_id, 
+            "video_id": video_id,
             "url": "video_url(now inplementing ...)",
             "title": "video_title(now inplementing ...)",
             "indices": [
-                {"timestamp": i["start"], "headline": i["text"]} 
+                {"timestamp": i["start"], "headline": i["text"]}
                 for i in indices
             ],
             "comments": ["this is optional. (now implementing ...)"]
-        }, 
+        },
     }
-
 
 
 # # 20分：8QJZSjAgEqs
@@ -72,8 +76,11 @@ def videoid_to_index(video_id: str):
 # prompt_transcript = ""
 # prompt_transcript2 = ""
 # for i, t in enumerate(transcript_list):
-#     prompt_transcript += "start: " + str(t["start"]) + " text: " + t["text"] + ", "
-#     prompt_transcript2 += t["text"] 
+    # prompt_transcript += (
+    #     "start: " + str(t["start"]) +
+    #     " text: " + t["text"] + ", "
+    # )
+#     prompt_transcript2 += t["text"]
 
 # # print(prompt_transcript)
 # # print(prompt_transcript2)
@@ -84,4 +91,3 @@ def videoid_to_index(video_id: str):
 # time_and_script = identify_timestamp(transcript_list, splitted_transcript)
 
 # print(transcript_to_index(time_and_script))
-

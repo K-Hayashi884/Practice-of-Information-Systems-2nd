@@ -18,7 +18,10 @@ def split_paragraph(transcript: str):
     openai.organization = "org-kaiK6XlzhOWBRvhZnZ40LYvq"
     openai.api_key = OPENAI_API_KEY
 
-    prompt = (transcript + "　段落ごとに分割してlist[\"text1\", \"text2\", \"text3\"]形式で出力:")
+    prompt = (
+        transcript +
+        "　段落ごとに分割してlist[\"text1\", \"text2\", \"text3\"]形式で出力:"
+    )
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
@@ -40,7 +43,9 @@ def identify_timestamp(time_transcript, splitted_transcript):
     for split in splitted_transcript[i:]:
         for j, time in enumerate(time_transcript):
             if split.startswith(time["text"]):
-                time_script_pairs.append({"start": time["start"], "text": time["text"]})
+                time_script_pairs.append(
+                    {"start": time["start"], "text": time["text"]}
+                )
                 i = j
     return time_script_pairs
 
@@ -76,7 +81,7 @@ def transcript_to_index(timescripts):
         )
 
         responses.append(
-            {"start": timescript["start"], 
+            {"start": timescript["start"],
              "text": response["choices"][0]["message"]["content"]}
         )
 
