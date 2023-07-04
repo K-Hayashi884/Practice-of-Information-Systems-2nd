@@ -33,36 +33,55 @@ def videoid_to_index(video_id: str):
 
     time_and_script = identify_timestamp(transcript_list, splitted_transcript)
 
-    print(transcript_to_index(time_and_script))
+    # { “video”: dict
+    #     {“id”: 動画のid, (string) 
+    #     “url”: 動画のurl, (string) 
+    #     “title”: 動画のタイトル (string) },
+    #     “indices”: list<dict>   # 目次のリスト
+    #         [ { “timestamp”: 時刻（text   10:55  など）
+    #         “headline”: GPTで生成した見出し   (string) 
+    #     } ]
+    #             “comments”:  list<dict>  　　# オプション。時刻リンクを含んだコメント
+    #         [ { “text”: 時刻リンクを含むコメント本文 (string) } ]
+    # }
+
+    indices = transcript_to_index(time_and_script)
+
+    return {
+        "video": {
+            "video_id": video_id, 
+            "url": "video_url(now inplementing ...)",
+            "title": "video_title(now inplementing ...)",
+            "indices": [
+                {"timestamp": i["start"], "headline": i["text"]} 
+                for i in indices
+            ],
+            "comments": ["this is optional. (now implementing ...)"]
+        }, 
+    }
 
 
-# 20分：8QJZSjAgEqs
-# １分: Osg_WYVV6bU
-# transcript_list = get_youtube_transcript("8QJZSjAgEqs")
-transcript_list = get_youtube_transcript("Osg_WYVV6bU")
-# print(extract_text(transcript_list))
 
-# プロンプト生成
-prompt_transcript = ""
-prompt_transcript2 = ""
-for i, t in enumerate(transcript_list):
-    prompt_transcript += "start: " + str(t["start"]) + " text: " + t["text"] + ", "
-    prompt_transcript2 += t["text"] 
+# # 20分：8QJZSjAgEqs
+# # １分: Osg_WYVV6bU
+# # transcript_list = get_youtube_transcript("8QJZSjAgEqs")
+# transcript_list = get_youtube_transcript("Osg_WYVV6bU")
+# # print(extract_text(transcript_list))
 
-# print(prompt_transcript)
-# print(prompt_transcript2)
+# # プロンプト生成
+# prompt_transcript = ""
+# prompt_transcript2 = ""
+# for i, t in enumerate(transcript_list):
+#     prompt_transcript += "start: " + str(t["start"]) + " text: " + t["text"] + ", "
+#     prompt_transcript2 += t["text"] 
 
-splitted_transcript = split_paragraph(prompt_transcript2)
-print(splitted_transcript)
+# # print(prompt_transcript)
+# # print(prompt_transcript2)
 
-time_and_script = identify_timestamp(transcript_list, splitted_transcript)
+# splitted_transcript = split_paragraph(prompt_transcript2)
+# print(splitted_transcript)
 
-print(transcript_to_index(time_and_script))
+# time_and_script = identify_timestamp(transcript_list, splitted_transcript)
 
-# import json
+# print(transcript_to_index(time_and_script))
 
-# json_data = transcript_to_index(prompt_transcript)["choices"][0]["message"]["content"]
-# print(json_data)
-# parsed_data = json.loads(json_data)
-
-# print(parsed_data)
