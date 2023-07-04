@@ -1,0 +1,26 @@
+aiohttp==3.8.4
+aiosignal==1.3.1
+asgiref @ file:///home/conda/feedstock_root/build_artifacts/asgiref_1685243452975/work
+async-timeout==4.0.2
+attrs==23.1.0
+certifi==2023.5.7
+charset-normalizer==3.1.0
+Django @ file:///home/conda/feedstock_root/build_artifacts/django_1686074432687/work
+django-cors-headers @ file:///home/conda/feedstock_root/build_artifacts/django-cors-headers_1683904088844/work
+django-filter==23.2
+djangorestframework==3.14.0
+frozenlist==1.3.3
+idna==3.4
+importlib-metadata==6.7.0
+Markdown==3.4.3
+multidict==6.0.4
+openai==0.27.8
+pytz==2023.3
+requests==2.31.0
+sqlparse @ file:///home/conda/feedstock_root/build_artifacts/sqlparse_1681817562700/work
+tqdm==4.65.0
+typing_extensions @ file:///home/conda/feedstock_root/build_artifacts/typing_extensions_1685704949284/work
+urllib3==2.0.3
+yarl==1.9.2
+youtube-transcript-api==0.6.1
+zipp==3.15.0
