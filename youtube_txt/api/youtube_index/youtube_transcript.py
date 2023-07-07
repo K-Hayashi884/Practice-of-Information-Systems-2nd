@@ -1,7 +1,5 @@
 from youtube_transcript_api import YouTubeTranscriptApi
-from youtube_index import split_paragraph
-from youtube_index import identify_timestamp
-from youtube_index import transcript_to_index
+from youtube_index import transcript_data_to_index
 
 
 # video_idを渡すと、対応する動画の字幕をとってくる関数
@@ -20,23 +18,22 @@ def extract_text(transcript_list):
     return transcript
 
 
+# 秒で返ってくる値を、HH:MM:SS形式に変換
+def seconds_to_hh_mm_ss(seconds):
+    hours = seconds // 3600
+    minutes = (seconds % 3600) // 60
+    seconds = seconds % 60
+
+    time_str = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+    return time_str
+
+
 # video_idを受け取り、目次を生成する
+# flutter側に供給するためのもの
 def videoid_to_index(video_id: str):
     transcript_list = get_youtube_transcript(video_id=video_id)
 
-    # プロンプト生成
-    prompt_transcript = ""
-    prompt_transcript2 = ""
-    for i, t in enumerate(transcript_list):
-        prompt_transcript += (
-            "start: " + str(t["start"]) +
-            " text: " + t["text"] + ", "
-        )
-        prompt_transcript2 += t["text"]
-
-    splitted_transcript = split_paragraph(prompt_transcript2)
-
-    time_and_script = identify_timestamp(transcript_list, splitted_transcript)
+    indices = transcript_data_to_index(transcript_data=transcript_list)
 
     # { “video”: dict
     #     {“id”: 動画のid, (string)
@@ -50,44 +47,60 @@ def videoid_to_index(video_id: str):
     #         [ { “text”: 時刻リンクを含むコメント本文 (string) } ]
     # }
 
-    indices = transcript_to_index(time_and_script)
-
     return {
         "video": {
             "video_id": video_id,
             "url": "video_url(now inplementing ...)",
             "title": "video_title(now inplementing ...)",
             "indices": [
-                {"timestamp": i["start"], "headline": i["text"]}
-                for i in indices
-            ],
+                {"timestamp": seconds_to_hh_mm_ss(i["timestamp"]),
+                 "headline": i["headline"]}for i in indices],
             "comments": ["this is optional. (now implementing ...)"]
         },
     }
 
 
-# # 20分：8QJZSjAgEqs
+# video_idを受け取り、目次を生成する
+# タイムスタンプをfloatで保存
+def videoid_to_floated_index(video_id: str):
+    transcript_list = get_youtube_transcript(video_id=video_id)
+
+    indices = transcript_data_to_index(transcript_data=transcript_list)
+
+    # { “video”: dict
+    #     {“id”: 動画のid, (string)
+    #     “url”: 動画のurl, (string)
+    #     “title”: 動画のタイトル (string) },
+    #     “indices”: list<dict>   # 目次のリスト
+    #         [ { “timestamp”: 時刻（float 10.55 (sec)  など）
+    #         “headline”: GPTで生成した見出し   (string)
+    #     } ]
+    #             “comments”:  list<dict>  　　# オプション。時刻リンクを含んだコメント
+    #         [ { “text”: 時刻リンクを含むコメント本文 (string) } ]
+    # }
+
+    return {
+        "video": {
+            "video_id": video_id,
+            "url": "video_url(now inplementing ...)",
+            "title": "video_title(now inplementing ...)",
+            "indices": indices,
+            "comments": ["this is optional. (now implementing ...)"]
+        },
+    }
+
+
+# ニュース系
+# # 8分：2IROKOt43Mk
 # # １分: Osg_WYVV6bU
-# # transcript_list = get_youtube_transcript("8QJZSjAgEqs")
-# transcript_list = get_youtube_transcript("Osg_WYVV6bU")
-# # print(extract_text(transcript_list))
 
-# # プロンプト生成
-# prompt_transcript = ""
-# prompt_transcript2 = ""
-# for i, t in enumerate(transcript_list):
-    # prompt_transcript += (
-    #     "start: " + str(t["start"]) +
-    #     " text: " + t["text"] + ", "
-    # )
-#     prompt_transcript2 += t["text"]
+# 呪術廻戦0 予告
+# 1.5分  h3YKB_XWcb4
+# 細切れのセリフだけなのでやはり難しい
 
-# # print(prompt_transcript)
-# # print(prompt_transcript2)
+# 西之島の大きさが分かった動画（15分）
+# 非ログイン状態でおすすめに出てきたやつ
+# 83oPQHylX2o
 
-# splitted_transcript = split_paragraph(prompt_transcript2)
-# print(splitted_transcript)
-
-# time_and_script = identify_timestamp(transcript_list, splitted_transcript)
-
-# print(transcript_to_index(time_and_script))
+import pprint
+pprint.pprint(videoid_to_index("83oPQHylX2o"))
