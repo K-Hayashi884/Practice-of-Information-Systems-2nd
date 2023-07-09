@@ -88,19 +88,3 @@ def videoid_to_floated_index(video_id: str):
             "comments": ["this is optional. (now implementing ...)"]
         },
     }
-
-
-# ニュース系
-# # 8分：2IROKOt43Mk
-# # １分: Osg_WYVV6bU
-
-# 呪術廻戦0 予告
-# 1.5分  h3YKB_XWcb4
-# 細切れのセリフだけなのでやはり難しい
-
-# 西之島の大きさが分かった動画（15分）
-# 非ログイン状態でおすすめに出てきたやつ
-# 83oPQHylX2o
-
-import pprint
-pprint.pprint(videoid_to_index("83oPQHylX2o"))

@@ -42,48 +42,48 @@ def transcript_data_to_index(transcript_data: list):
     splitted_strings.append(tmp_text)
     pprint.pprint("splitted strings: " + str(splitted_strings))
 
-    # # GPTにプロンプトを投げる部分
-    # for transcript in splitted_strings:
-    #     prompt = (
-    #         transcript +
-    #         " 段落ごとに分割してその最初の10文字と最後の10文字、ネタバレにならないタイトル10文字以内を" +
-    #         "dictのlist[{\"start_text\": , \"end_text\": , \"headline\": }]" +
-    #         "形式で出力:"
-    #     )
-    #     response = openai.ChatCompletion.create(
-    #         model="gpt-3.5-turbo",
-    #         messages=[
-    #                 {"role": "user", "content": prompt}
-    #             ]
-    #     )
+    # GPTにプロンプトを投げる部分
+    for transcript in splitted_strings:
+        prompt = (
+            transcript +
+            " 段落ごとに分割してその最初の10文字と最後の10文字、ネタバレにならないタイトル10文字以内を" +
+            "dictのlist[{\"start_text\": , \"end_text\": , \"headline\": }]" +
+            "形式で出力:"
+        )
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                    {"role": "user", "content": prompt}
+                ]
+        )
 
-    #     # 文字列で返ってきたリストをlist型に変換
-    #     print(response["choices"][0]["message"]["content"])
-    #     try:
-    #         eval_list = eval(
-    #             response["choices"][0]["message"]["content"]
-    #             .replace("。", ".").replace("、", ",")
-    #         )
-    #     except SyntaxError:
-    #         response = openai.ChatCompletion.create(
-    #             model="gpt-3.5-turbo",
-    #             messages=[
-    #                     {"role": "user", "content": prompt}
-    #                 ]
-    #         )
-    #         eval_list = eval(
-    #                 response["choices"][0]["message"]["content"]
-    #                 .replace("。", ".").replace("、", ",")
-    #             )
+        # 文字列で返ってきたリストをlist型に変換
+        print(response["choices"][0]["message"]["content"])
+        try:
+            eval_list = eval(
+                response["choices"][0]["message"]["content"]
+                .replace("。", ".").replace("、", ",")
+            )
+        except SyntaxError:
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                        {"role": "user", "content": prompt}
+                    ]
+            )
+            eval_list = eval(
+                    response["choices"][0]["message"]["content"]
+                    .replace("。", ".").replace("、", ",")
+                )
 
-    #     eval_lists += eval_list
-    # print("eval_lists: ", eval_lists)
-    # pprint.pprint(eval_lists)
-
-    # デバッグ用
-    # GPTに投げるリクエスト節約
-    eval_lists = [{'start_text': 'こんにちは皆さん演習ですこのチャ', 'end_text': 'お話しさせていただきます', 'headline': '岩手山噴火未遂事件'}, {'start_text': '西ノ島がすごい理由', 'end_text': '最新の大きさ', 'headline': '西ノ島の最新の大きさは国分の大きさ'}, {'start_text': '西ノ島がすごい理由', 'end_text': '最新の大きさ', 'headline': '西ノ島の最新の大きさは琵琶湖をまるまる国分'}, {'start_text': '西ノ島がすごい理由', 'end_text': '最新の大きさ', 'headline': '西ノ島の最新の大きさは国分です'}, {'start_text': '西ノ島がすごい理由', 'end_text': '最新の大きさ', 'headline': '西ノ島の最新の大きさは琵琶湖ぐらい'}, {'start_text': '西ノ島がすごい理由', 'end_text': '最新の大きさ', 'headline': '西ノ島の最新の大きさは琵琶湖くらい'}, {'start_text': '熱々の火山ガスが出ているためにこのように濁っているわけですねそしてこの1973年9月14日に濁っている場所から噴火が発生いたしましたそしてこの噴火によって西の島の次男が産声をあげたわけなんですねそして誕生しましたはいで1973年はねこんな形でしたが1974年には蛇のような形になっていたということですね大きさは0.07平方キロメートルから0.32m2に拡大いたしましたでちょっとですねこの1974年の姿をスケッチとってみますとまずはフライドチキンのところが長男ですねそしてエビのようなところがですね次男であるということになりますはいというわけでこのように長男と次男が合体していた状況だったんですねそしてその後西ノ島ですねしばらく噴火をお休みいたします噴火をお休みするんですけども島の形はですね行きまして蛇のような形から北海道のような形になっていたんですねはい', 'end_text': 'この2007年の西ノ島の形ですねスケッチしますとまずは長男と次男の部分がありますけども長男と次男の間に砂がたまっているような状況ですねそのために北海道のような形になっておりますさらに砂と次男の間のここなんですけども湖ができておりました興味深いですよねそしてその後2013年に三男が誕生いたしますこの2013年西ノ島さらににですね噴火を起こしました', 'headline': '西ノ島の形の変化と噴火の歴史'}, {'start_text': '拡大していったと', 'end_text': 'になってしまった', 'headline': '西ノ島の驚くべき変化'}, {'start_text': '小さくなっているということなんですね詳しくお話', 'end_text': '2023年6月はですね最新は', 'headline': '西ノ島の大きさの変化'}, {'start_text': '3.71m2だったということですね', 'end_text': 'と思いますね', 'headline': '西ノ島の大きさの変化の理由と潮の満ち引きの影響'}, {'start_text': 'もよかったらご感想ですねお待ちしておりますはい気になりますねまあ余談はですねこれぐらいにしておきまし', 'end_text': '山頂の2カ所から噴火まあこういった噴火もしかしたら将来見られるかもしれないということありましてねはいというわけでね今西島ですけど噴火止まっておりまして面積が4.1km2から3.71m2', 'headline': '西尾島の最新情報！活発な火山活動の様子を公開！'}, {'start_text': 'なっているということでねそろそろですね', 'end_text': '本格的な噴火をよろしくですねお願い申し上げ奉ってるということなんですね', 'headline': '本格的な噴火をお願いしたいな'}, {'start_text': '噴火が止まっているからです', 'end_text': '本格的な噴火よろしくお願い申し上げ縦も取ります', 'headline': '噴火状況と将来の可能性について'}]
+        eval_lists += eval_list
+    print("eval_lists: ", eval_lists)
     pprint.pprint(eval_lists)
+
+    # # デバッグ用
+    # # GPTに投げるリクエスト節約
+    # eval_lists = [{'start_text': 'こんにちは皆さん演習ですこのチャ', 'end_text': 'お話しさせていただきます', 'headline': '岩手山噴火未遂事件'}, {'start_text': '西ノ島がすごい理由', 'end_text': '最新の大きさ', 'headline': '西ノ島の最新の大きさは国分の大きさ'}, {'start_text': '西ノ島がすごい理由', 'end_text': '最新の大きさ', 'headline': '西ノ島の最新の大きさは琵琶湖をまるまる国分'}, {'start_text': '西ノ島がすごい理由', 'end_text': '最新の大きさ', 'headline': '西ノ島の最新の大きさは国分です'}, {'start_text': '西ノ島がすごい理由', 'end_text': '最新の大きさ', 'headline': '西ノ島の最新の大きさは琵琶湖ぐらい'}, {'start_text': '西ノ島がすごい理由', 'end_text': '最新の大きさ', 'headline': '西ノ島の最新の大きさは琵琶湖くらい'}, {'start_text': '熱々の火山ガスが出ているためにこのように濁っているわけですねそしてこの1973年9月14日に濁っている場所から噴火が発生いたしましたそしてこの噴火によって西の島の次男が産声をあげたわけなんですねそして誕生しましたはいで1973年はねこんな形でしたが1974年には蛇のような形になっていたということですね大きさは0.07平方キロメートルから0.32m2に拡大いたしましたでちょっとですねこの1974年の姿をスケッチとってみますとまずはフライドチキンのところが長男ですねそしてエビのようなところがですね次男であるということになりますはいというわけでこのように長男と次男が合体していた状況だったんですねそしてその後西ノ島ですねしばらく噴火をお休みいたします噴火をお休みするんですけども島の形はですね行きまして蛇のような形から北海道のような形になっていたんですねはい', 'end_text': 'この2007年の西ノ島の形ですねスケッチしますとまずは長男と次男の部分がありますけども長男と次男の間に砂がたまっているような状況ですねそのために北海道のような形になっておりますさらに砂と次男の間のここなんですけども湖ができておりました興味深いですよねそしてその後2013年に三男が誕生いたしますこの2013年西ノ島さらににですね噴火を起こしました', 'headline': '西ノ島の形の変化と噴火の歴史'}, {'start_text': '拡大していったと', 'end_text': 'になってしまった', 'headline': '西ノ島の驚くべき変化'}, {'start_text': '小さくなっているということなんですね詳しくお話', 'end_text': '2023年6月はですね最新は', 'headline': '西ノ島の大きさの変化'}, {'start_text': '3.71m2だったということですね', 'end_text': 'と思いますね', 'headline': '西ノ島の大きさの変化の理由と潮の満ち引きの影響'}, {'start_text': 'もよかったらご感想ですねお待ちしておりますはい気になりますねまあ余談はですねこれぐらいにしておきまし', 'end_text': '山頂の2カ所から噴火まあこういった噴火もしかしたら将来見られるかもしれないということありましてねはいというわけでね今西島ですけど噴火止まっておりまして面積が4.1km2から3.71m2', 'headline': '西尾島の最新情報！活発な火山活動の様子を公開！'}, {'start_text': 'なっているということでねそろそろですね', 'end_text': '本格的な噴火をよろしくですねお願い申し上げ奉ってるということなんですね', 'headline': '本格的な噴火をお願いしたいな'}, {'start_text': '噴火が止まっているからです', 'end_text': '本格的な噴火よろしくお願い申し上げ縦も取ります', 'headline': '噴火状況と将来の可能性について'}]
+    # pprint.pprint(eval_lists)
 
     print("len(eval_lists): ", len(eval_lists))
 
