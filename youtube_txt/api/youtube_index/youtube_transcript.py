@@ -20,11 +20,13 @@ def extract_text(transcript_list):
 
 # 秒で返ってくる値を、HH:MM:SS形式に変換
 def seconds_to_hh_mm_ss(seconds):
-    hours = seconds // 3600
-    minutes = (seconds % 3600) // 60
-    seconds = seconds % 60
-
-    time_str = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+    hours = int(seconds // 3600)
+    minutes = int((seconds % 3600) // 60)
+    seconds = int(seconds % 60)
+    if hours == 0:
+        time_str = f"{minutes:01d}:{seconds:02d}"
+    else:
+        time_str = f"{hours:01d}:{minutes:02d}:{seconds:02d}"
     return time_str
 
 
