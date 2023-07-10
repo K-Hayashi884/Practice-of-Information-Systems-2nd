@@ -7,9 +7,19 @@ from youtube_index import transcript_data_to_index
 # {'text': 字幕本体(str), 'start': 開始秒数(float), 'duration': 持続時間(float)}
 def get_youtube_transcript(video_id: str):
     transcript_list = YouTubeTranscriptApi.list_transcripts(video_id=video_id)
-    transcript = transcript_list.find_transcript(['ja', 'en'])
+    transcript = transcript_list.find_transcript(['ja'])
     return transcript.fetch()
 
+
+# ある動画に日本語の字幕が存在するかどうか確認する
+# 存在する場合Trueを返す
+def is_there_transcript(video_id: str):
+    transcript_list = YouTubeTranscriptApi.list_transcripts(video_id=video_id)
+    try:
+        transcript_list.find_transcript(['ja'])
+    except Exception:
+        return False
+    return True
 
 def extract_text(transcript_list):
     transcript = ""
@@ -90,3 +100,4 @@ def videoid_to_floated_index(video_id: str):
             "comments": ["this is optional. (now implementing ...)"]
         },
     }
+
