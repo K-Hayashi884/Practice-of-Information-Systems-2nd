@@ -1,4 +1,13 @@
 from django.db import models
+from django.contrib.auth.models import (BaseUserManager,
+                                        AbstractBaseUser,
+                                        PermissionsMixin)
+from django.utils.translation import gettext_lazy as _
+
+from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from rest_framework.authtoken.models import Token
 
 
 class Customer(models.Model):
@@ -28,7 +37,3 @@ class Headline(models.Model):
     video_id = models.TextField()
     timestamp = models.FloatField()
     headline = models.TextField()
-
-
-   
-
