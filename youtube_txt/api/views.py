@@ -7,8 +7,15 @@ from .models import Headline
 from .models import LaterList
 from .youtube_index.youtube_transcript import videoid_to_floated_index
 from .youtube_index.youtube_transcript import seconds_to_hh_mm_ss
+# ログイン関連
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework_jwt.settings import api_settings
+from django.contrib.auth import authenticate
 
-
+jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
 @api_view(['GET'])
 def getRoutes(request):
@@ -39,7 +46,24 @@ def getRoutes(request):
     return Response(routes)
 
 
+@api_view(['POST'])
+def sign_in(request):
+    print("request", request.data)
+    username = request.data.get('username')
+    password = request.data.get('password')
+    print(username, password)
+    user = authenticate(username=username, password=password)
+
+    if user is not None:
+        payload = jwt_payload_handler(user)
+        token = jwt_encode_handler(payload)
+        return Response({'token': token})
+    else:
+        return Response({'error': 'Invalid credentials'}, status=400)
+    
+
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def getVideos(request):
     search_query = request.GET.get('search_query', '') 
     if search_query == None:
@@ -51,7 +75,9 @@ def getVideos(request):
         serializer = VideoSerializer(videos, many=True)
         return Response(serializer.data)
 
+
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def getHeadlines(request, k):
     headlines = Headline.objects.filter(video_id=k).order_by('timestamp')
     
@@ -104,7 +130,9 @@ def getHeadlines(request, k):
         new_serializer = getHeadlineSerializer(indices)
         return Response(new_serializer.data)
 
+
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def getLaterlist(request,k):
     laterlist = LaterList.objects.filter(customer_id=k)
     video_id_list = []
