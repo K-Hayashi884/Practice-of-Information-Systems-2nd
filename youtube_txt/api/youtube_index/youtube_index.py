@@ -16,7 +16,7 @@ def transcript_data_to_index(transcript_data: list):
     pprint.pprint(transcript_data)
     # youtube-transcript-apiで取得したデータを入力
     # keys.jsonファイルのパスを指定
-    json_file_path = "keys.json"
+    json_file_path = "./api/youtube_index/keys.json"
 
     # ファイルを開いて内容を読み込む
     with open(json_file_path, "r") as json_file:

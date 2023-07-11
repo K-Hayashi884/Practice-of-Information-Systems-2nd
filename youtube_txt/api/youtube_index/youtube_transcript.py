@@ -1,5 +1,5 @@
 from youtube_transcript_api import YouTubeTranscriptApi
-from youtube_index import transcript_data_to_index
+from .youtube_index import transcript_data_to_index
 
 
 # video_idを渡すと、対応する動画の字幕をとってくる関数
@@ -97,7 +97,7 @@ def videoid_to_floated_index(video_id: str):
             "url": "video_url(now inplementing ...)",
             "title": "video_title(now inplementing ...)",
             "indices": indices,
-            "comments": ["this is optional. (now implementing ...)"]
+            "comments": [{"text": "this is optional. (now implementing ...)"}]
         },
     }
 
