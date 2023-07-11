@@ -19,7 +19,7 @@ class Video(models.Model):
 
 
 class LaterList(models.Model):
-    later_list_id = models.IntegerField(primary_key=True)
+    later_list_id = models.AutoField(primary_key=True)
     customer_id = models.ForeignKey(Customer, on_delete=models.CASCADE)
     video_id = models.ForeignKey(Video, on_delete=models.CASCADE)
 
