@@ -21,6 +21,7 @@ def is_there_transcript(video_id: str):
         return False
     return True
 
+
 def extract_text(transcript_list):
     transcript = ""
     for t in transcript_list:
