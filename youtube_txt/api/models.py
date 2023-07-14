@@ -1,11 +1,7 @@
 from django.db import models
+from django.contrib.auth import get_user_model
 
-
-class Customer(models.Model):
-    customer_id = models.IntegerField(primary_key=True)
-    customer_name = models.TextField()
-    email = models.TextField()
-    password = models.TextField()
+User = get_user_model()
 
 
 class Video(models.Model):
@@ -20,7 +16,7 @@ class Video(models.Model):
 
 class LaterList(models.Model):
     later_list_id = models.IntegerField(primary_key=True)
-    customer_id = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     video_id = models.ForeignKey(Video, on_delete=models.CASCADE)
 
 

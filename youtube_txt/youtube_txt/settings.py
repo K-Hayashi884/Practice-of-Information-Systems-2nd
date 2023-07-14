@@ -39,7 +39,14 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "api.apps.ApiConfig",
+    'django_extensions',
 ]
+
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': [
+#         'api.auth.authenticate.FirebaseAuth',
+#     ]
+# }
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
