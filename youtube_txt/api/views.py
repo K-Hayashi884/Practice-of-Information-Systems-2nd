@@ -17,17 +17,16 @@ cred = credentials.Certificate("./api/txt-76a0f-firebase-adminsdk-h2wwc-f9c88f2f
 firebase_admin.initialize_app(cred)
 
 
-# ログインしているかどうかを確認する関数
+# アクセスしてきた人がログインしているかどうかを確認する関数
+# ログインしていた場合はそのユーザのレコード（Userモデルに保存されている情報）をreturnするので、
+# ログインしているユーザの情報が欲しい場合にも使用可能
 def verify_user(request):
     # ログインしていないユーザは弾く
     # POSTリクエストからFirebaseトークンを取得
     id_token = request.headers.get('Authorization')
-    # id_token = "eyJhbGciOiJSUzI1NiIsImtpZCI6ImE1MWJiNGJkMWQwYzYxNDc2ZWIxYjcwYzNhNDdjMzE2ZDVmODkzMmIiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vdHh0LTc2YTBmIiwiYXVkIjoidHh0LTc2YTBmIiwiYXV0aF90aW1lIjoxNjg5MzIyNzMwLCJ1c2VyX2lkIjoiVnpzWm5XUVliT2Z1OWtGQ0J3UnF5OUl4SklsMiIsInN1YiI6IlZ6c1puV1FZYk9mdTlrRkNCd1JxeTlJeEpJbDIiLCJpYXQiOjE2ODkzMjI3MzAsImV4cCI6MTY4OTMyNjMzMCwiZW1haWwiOiJ1c2VyMkB1c2VyMi5jb20iLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsImZpcmViYXNlIjp7ImlkZW50aXRpZXMiOnsiZW1haWwiOlsidXNlcjJAdXNlcjIuY29tIl19LCJzaWduX2luX3Byb3ZpZGVyIjoicGFzc3dvcmQifX0.R37wY7nXrxFPgVOPhYvhC9EWLPZV35wCUXgF9jFVBJPLZ_FOuIHMIclFM3aoHtnep2xNzC9LdMAXBtt-GibshZeeO97FXjq17I2eOUA2MPrkKEi6CpN54i00KMaeL4EQTt_QC6GCQGFMKmG2QlY63fbYEHGUZFUrubiqvM1NwJ9qF-SfVvD20ftLugU7rmGCh5cHAzj-76W743ABC15mCGwHyi1hXedW-v21RCizEF_cdyWwmPQ7cNGwnJE069PD8PN_AKwBVqIysKkVhPSS8Caxt4disgPn1U091i3vl8GdI64r_xVV4nQ9DksgJTHM3LOsPLrAzJpXC_cvW1dSbQ"
     try:
         # Firebaseトークンの検証
-        print("token", id_token.split(" "))
         decoded_token = auth.verify_id_token(id_token.split(" ")[1])
-        print(decoded_token)
         return User.objects.filter(email=decoded_token["email"])
 
     except auth.InvalidIdTokenError:
@@ -41,6 +40,7 @@ def verify_user(request):
     except Exception as e:
         # その他の例外が発生した場合の処理
         return Response({'error': str(e)}, status=500)
+
 
 @api_view(['GET'])
 def getRoutes(request):
@@ -67,6 +67,9 @@ def getRoutes(request):
     ]
     return Response(routes)
 
+
+# サインアップ用関数
+# ユーザデータをモデルに登録
 @api_view(['POST'])
 def sign_up(request):
     email = request.POST.get('email')
