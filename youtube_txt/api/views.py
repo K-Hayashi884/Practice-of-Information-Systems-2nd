@@ -70,10 +70,11 @@ def getRoutes(request):
 @api_view(['POST'])
 def sign_up(request):
     email = request.POST.get('email')
+    username = request.POST.get('username')
 
     # Userモデルにemailとusernameを保存する
-    User.objects.create_user(email=email)
-    return Response({'message': 'email registered successfully'}, status=201)
+    User.objects.create_user(email=email, username=username)
+    return Response({'message': 'user info registered successfully'}, status=201)
 
 
 @api_view(['GET'])
