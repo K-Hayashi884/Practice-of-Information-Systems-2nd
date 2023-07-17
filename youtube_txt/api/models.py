@@ -8,6 +8,9 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
+import sys
+sys.path.append('../')
+from account.models import User
 
 
 class Customer(models.Model):
@@ -28,8 +31,8 @@ class Video(models.Model):
 
 
 class LaterList(models.Model):
-    later_list_id = models.IntegerField(primary_key=True)
-    customer_id = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    later_list_id = models.AutoField(primary_key=True)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     video_id = models.ForeignKey(Video, on_delete=models.CASCADE)
 
 

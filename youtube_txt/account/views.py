@@ -19,8 +19,8 @@ from rest_framework import status, viewsets, filters
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    authentication_classes = (TokenAuthentication,)
-    #permission_classes = (IsAuthenticated, )
+    # authentication_classes = (TokenAuthentication,)
+    # permission_classes = (IsAuthenticated, )
 
 # @api_view(['POST'])
 # def create_user(request):
