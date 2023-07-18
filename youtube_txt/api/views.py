@@ -80,9 +80,20 @@ def getVideos(request):
             serializer = VideoSerializer(videos, many=True)
             return Response(serializer.data)
     else:
-        res = search(search_query)
-        print(res)
-        videos = Video.objects.filter(video_title__contains=search_query)
+        video_list = search(search_query)
+        print(video_list)
+        videos = []
+        for video in video_list:
+            try:
+                tmp = Video.objects.get(video_id=video['video_id'])
+                print(tmp)
+                videos.append(tmp)
+            except Video.DoesNotExist:
+                tmp = Video.objects.create(video_id=video['video_id'], video_thumbnail_url=video['video_thumbnail_url'], video_count=0, video_title=video['video_title'])
+                videos.append(tmp)
+
+            
+        # videos = Video.objects.filter(video_title__contains=search_query)
         serializer = VideoSerializer(videos, many=True)
         return Response(serializer.data)
 

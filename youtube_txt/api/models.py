@@ -22,7 +22,7 @@ class Customer(models.Model):
 
 class Video(models.Model):
     video_id = models.TextField(primary_key=True)
-    video_url = models.TextField()
+    video_thumbnail_url = models.TextField()
     video_count = models.IntegerField(default=0)
     video_title = models.TextField()
 
