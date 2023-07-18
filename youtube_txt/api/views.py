@@ -1,6 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializers import VideoSerializer
+from .youtube_index.youtube_transcript import seconds_to_hh_mm_ss, videoid_to_floated_index
+from .serializers import VideoSerializer, getHeadlineSerializer
 from .serializers import HeadlineSerializer
 from .serializers import LaterListSerializer
 from .models import Video
@@ -18,6 +19,9 @@ import sys
 sys.path.append('../')
 from account.models import User
 from .youtube_api import search
+
+from apiclient.discovery import build
+from django.conf import settings
 
 
 @api_view(['GET'])
@@ -98,63 +102,88 @@ def getVideos(request):
         return Response(serializer.data)
 
 @api_view(['GET'])
-def getHeadlines(request,k):
-    # headlines = Headline.objects.filter(video_id=k).order_by('timestamp')
-    
-    # if headlines.exists():
-    #     # 目次データを整形
-    #     indices_data = []
-    #     for headline in headlines:
-    #         index = {
-    #             "timestamp": headline.timestamp,
-    #             "headline": headline.headline
-    #         }
-    #         indices_data.append(index)
-
-    #     # serializerにセット
-    #     serializer = getHeadlineSerializer(
-    #         {"video":
-    #             {"video_id": k,
-    #              "url": "vide url, now implementing",
-    #              "title": "video_title(now inplementing ...)",
-    #              "indices": [
-    #                 {"timestamp": seconds_to_hh_mm_ss(d["timestamp"]),
-    #                  "headline": d["headline"]} for d in indices_data
-    #              ],
-    #              "comments": [
-    #                  {"text": "this is optional. (now implementing ...)"}
-    #                 ]
-    #              }
-    #          }
-    #     )
-    #     return Response(serializer.data)
-    # else:
-    #     # headlineとtimestamp取得
-    #     floated_indices = videoid_to_floated_index(video_id=k) 
-
-    #     # option: 時刻リンクを含むコメントを追加
-
-    #     # DBに上記の内容を保存
-    #     for index in floated_indices["video"]["indices"]:
-    #         new_headline = Headline(
-    #             video_id=k,
-    #             timestamp=index["timestamp"],
-    #             headline=index["headline"],
-    #         )
-    #         new_headline.save()
-
-    #     # timestampをstringに直したバージョンを作成
-    #     indices = floated_indices
-    #     indices["video"]["indices"] = [
-    #         {"timestamp": seconds_to_hh_mm_ss(d["timestamp"]),
-    #          "headline": d["headline"]} for d in indices["video"]["indices"]
-    #     ]
-    #     # 返却用のserializer生成
-    #     new_serializer = getHeadlineSerializer(indices)
-    #     return Response(new_serializer.data)
+def getHeadlines(request, k):
     headlines = Headline.objects.filter(video_id=k).order_by('timestamp')
-    serializer = HeadlineSerializer(headlines, many=True)
-    return Response (serializer.data)
+    
+    if headlines.exists():
+        # 目次データを整形
+        indices_data = []
+        for headline in headlines:
+            index = {
+                "timestamp": headline.timestamp,
+                "headline": headline.headline
+            }
+            indices_data.append(index)
+
+        # serializerにセット
+        serializer = getHeadlineSerializer(
+            {"video":
+                {"video_id": k,
+                 "url": "vide url, now implementing",
+                 "title": "video_title(now inplementing ...)",
+                 "indices": [
+                    {"timestamp": seconds_to_hh_mm_ss(d["timestamp"]),
+                     "headline": d["headline"]} for d in indices_data
+                 ],
+                 "comments": [
+                     {"text": "this is optional. (now implementing ...)"}
+                    ]
+                 }
+             }
+        )
+        return Response(serializer.data)
+    else:
+        # headlineとtimestamp取得
+        floated_indices = videoid_to_floated_index(video_id=k) 
+
+        # option: 時刻リンクを含むコメントを追加
+
+        # DBに上記の内容を保存
+        for index in floated_indices["video"]["indices"]:
+            new_headline = Headline(
+                video_id=k,
+                timestamp=index["timestamp"],
+                headline=index["headline"],
+            )
+            new_headline.save()
+        
+        # Videoモデルにも情報を追加
+        # YouTube Data APIのクライアントを作成
+        youtube = build('youtube', 'v3', developerKey=settings.YOUTUBE_API_KEY)
+
+        # 動画の情報を取得します
+        response = youtube.videos().list(
+            part='snippet,statistics',
+            id=k
+        ).execute()
+
+        # 必要な情報を抽出します
+        video_data = response['items'][0]
+        video_id = video_data['id']
+        video_title = video_data['snippet']['title']
+        video_thumbnail_url = video_data['snippet']['thumbnails']['default']['url']
+        video_count = video_data['statistics']['viewCount']
+
+        # ビデオオブジェクトを作成し、保存します
+        Video.objects.create(
+            video_id=video_id,
+            video_title=video_title,
+            video_thumbnail_url=video_thumbnail_url,
+            video_count=video_count
+        )
+
+        # timestampをstringに直したバージョンを作成
+        indices = floated_indices
+        indices["video"]["indices"] = [
+            {"timestamp": seconds_to_hh_mm_ss(d["timestamp"]),
+             "headline": d["headline"]} for d in indices["video"]["indices"]
+        ]
+        # 返却用のserializer生成
+        new_serializer = getHeadlineSerializer(indices)
+        return Response(new_serializer.data)
+    # headlines = Headline.objects.filter(video_id=k).order_by('timestamp')
+    # serializer = HeadlineSerializer(headlines, many=True)
+    # return Response (serializer.data)
 
 # LaterListのためのクラス
 class LaterListAPI(APIView):
