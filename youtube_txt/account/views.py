@@ -22,24 +22,6 @@ class UserViewSet(viewsets.ModelViewSet):
     # authentication_classes = (TokenAuthentication,)
     # permission_classes = (IsAuthenticated, )
 
-# @api_view(['POST'])
-# def create_user(request):
-#     data = request.data
-
-#     email = data['email']
-#     username = data['username']
-#     password = data['password']
-
-#     user = UserManager.create_user(
-#         email=email,
-#         username=username,
-#         password=password,
-#         )
-    
-#     serializer = UserSerializer(user)
-    
-#     return Response(serializer.data)
-
 class AuthRegister(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
     queryset = User.objects.all()

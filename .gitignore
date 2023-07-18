@@ -159,4 +159,6 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-.DS_Store/
+.DS_Store
+
+/youtube_txt/youtube_txt/setting_secret.py
