@@ -74,8 +74,8 @@ def getRoutes(request):
 @api_view(['GET'])
 def getVideos(request):
     search_query = request.GET.get('search_query', '')
-    print(search_query)
-    if search_query == None:
+    print("this is query "+search_query)
+    if not search_query:
             videos = Video.objects.all()
             serializer = VideoSerializer(videos, many=True)
             return Response(serializer.data)
