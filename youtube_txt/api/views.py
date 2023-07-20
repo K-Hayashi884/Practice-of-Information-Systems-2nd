@@ -79,10 +79,10 @@ def getRoutes(request):
 def getVideos(request):
     search_query = request.GET.get('search_query', '')
     print(search_query)
-    if search_query == None:
-            videos = Video.objects.all()
-            serializer = VideoSerializer(videos, many=True)
-            return Response(serializer.data)
+    if search_query is None:
+        videos = Video.objects.all()[:10]
+        serializer = VideoSerializer(videos, many=True)
+        return Response(serializer.data)
     else:
         video_list = search(search_query)
         print(video_list)

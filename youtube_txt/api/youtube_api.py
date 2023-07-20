@@ -10,7 +10,7 @@ def search(query):
         part='snippet',
         type='video',
         regionCode="jp",
-        maxResults=2,# 5~50まで
+        maxResults=5,  # 5~50まで
     ).execute()
 
     video_list = []
