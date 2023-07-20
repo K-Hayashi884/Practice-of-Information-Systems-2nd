@@ -1,18 +1,11 @@
 from django.db import models
-
-# Create your models here.
-
-from django.db import models
-from django.contrib.auth.models import (BaseUserManager,
-                                        AbstractBaseUser,
-                                        PermissionsMixin)
+from django.contrib.auth.models import (
+    BaseUserManager,
+    AbstractBaseUser,
+    PermissionsMixin,
+)
 from django.utils.translation import gettext_lazy as _
-
-from django.conf import settings
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
-from typing import Any, Optional
 
 
 # @receiver(post_save, sender=settings.AUTH_USER_MODEL)
@@ -37,9 +30,9 @@ class UserManager(BaseUserManager):
         return user
 
     def create_user(self, email, username, password=None, **extra_fields):
-        extra_fields.setdefault('is_active', True)
-        extra_fields.setdefault('is_staff', False)
-        extra_fields.setdefault('is_superuser', False)
+        extra_fields.setdefault("is_active", True)
+        extra_fields.setdefault("is_staff", False)
+        extra_fields.setdefault("is_superuser", False)
         return self._create_user(
             email=email,
             username=username,
@@ -48,9 +41,9 @@ class UserManager(BaseUserManager):
         )
 
     def create_superuser(self, email, username, password, **extra_fields):
-        extra_fields['is_active'] = True
-        extra_fields['is_staff'] = True
-        extra_fields['is_superuser'] = True
+        extra_fields["is_active"] = True
+        extra_fields["is_staff"] = True
+        extra_fields["is_superuser"] = True
         return self._create_user(
             email=email,
             username=username,
@@ -60,38 +53,23 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-
-    username = models.CharField(
-        verbose_name=_("username"),
-        unique=True,
-        max_length=150
-    )
-    email = models.EmailField(
-        verbose_name=_("Email Address"),
-        unique=True
-    )
-    age = models.IntegerField(
-        verbose_name=_("age"),
-        null=True,
-        blank=True
-    )
-    is_superuser = models.BooleanField(
-        verbose_name=_("is_superuer"),
-        default=False
-    )
+    username = models.CharField(verbose_name=_("username"), unique=True, max_length=150)
+    email = models.EmailField(verbose_name=_("Email Address"), unique=True)
+    age = models.IntegerField(verbose_name=_("age"), null=True, blank=True)
+    is_superuser = models.BooleanField(verbose_name=_("is_superuer"), default=False)
     is_staff = models.BooleanField(
-        _('staff status'),
+        _("staff status"),
         default=False,
     )
     is_active = models.BooleanField(
-        _('active'),
+        _("active"),
         default=True,
     )
 
     objects = UserManager()
 
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['email']
+    USERNAME_FIELD = "username"
+    REQUIRED_FIELDS = ["email"]
 
     def __str__(self):
         return self.username
