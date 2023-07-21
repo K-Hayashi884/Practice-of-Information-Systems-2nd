@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .youtube_index.youtube_transcript import seconds_to_hh_mm_ss, videoid_to_floated_index
-from .serializers import VideoSerializer, getHeadlineSerializer
+from .serializers import IndexSerializer, VideoSerializer, getHeadlineSerializer
 from .serializers import HeadlineSerializer
 from .serializers import LaterListSerializer
 from .models import Video
@@ -115,22 +115,26 @@ def getHeadlines(request, k):
             }
             indices_data.append(index)
 
-        # serializerにセット
-        serializer = getHeadlineSerializer(
-            {"video":
-                {"video_id": k,
-                 "url": "vide url, now implementing",
-                 "title": "video_title(now inplementing ...)",
-                 "indices": [
+        # # serializerにセット
+        # serializer = getHeadlineSerializer(
+        #     {"video":
+        #         {"video_id": k,
+        #          "url": "vide url, now implementing",
+        #          "title": "video_title(now inplementing ...)",
+        #          "indices": [
+        #             {"timestamp": seconds_to_hh_mm_ss(d["timestamp"]),
+        #              "headline": d["headline"]} for d in indices_data
+        #          ],
+        #          "comments": [
+        #              {"text": "this is optional. (now implementing ...)"}
+        #             ]
+        #          }
+        #      }
+        # )
+        serializer = IndexSerializer([
                     {"timestamp": seconds_to_hh_mm_ss(d["timestamp"]),
                      "headline": d["headline"]} for d in indices_data
-                 ],
-                 "comments": [
-                     {"text": "this is optional. (now implementing ...)"}
-                    ]
-                 }
-             }
-        )
+                 ], many=True)
         return Response(serializer.data)
     else:
         # headlineとtimestamp取得
@@ -179,7 +183,8 @@ def getHeadlines(request, k):
              "headline": d["headline"]} for d in indices["video"]["indices"]
         ]
         # 返却用のserializer生成
-        new_serializer = getHeadlineSerializer(indices)
+        # new_serializer = getHeadlineSerializer(indices)
+        new_serializer = IndexSerializer(indices["video"]["indices"], many=True)
         return Response(new_serializer.data)
     # headlines = Headline.objects.filter(video_id=k).order_by('timestamp')
     # serializer = HeadlineSerializer(headlines, many=True)
