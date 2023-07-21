@@ -56,7 +56,8 @@ def transcript_data_to_index(transcript_data: list):
         )
 
         eval_flag = False
-        while eval_flag is False:
+        eval_fail_count = 0
+        while eval_flag is False and eval_fail_count < 3:
             try:
                 response = openai.ChatCompletion.create(
                     model="gpt-3.5-turbo",
@@ -74,8 +75,11 @@ def transcript_data_to_index(transcript_data: list):
                     .replace("。", ".").replace("、", ",")
                 )
                 eval_flag = True
+                eval_fail_count = 0
             except SyntaxError:
                 eval_flag = False
+                eval_fail_count += 1
+            
 
         if type(eval_list) == dict:
             eval_list = [eval_list]
