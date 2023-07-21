@@ -25,7 +25,7 @@ def search(query):
         # チャンネル名
         # channeltitle = snippetInfo['channelTitle']
 
-        thumbnail = snippetInfo['thumbnails']['default']['url']
+        thumbnail = snippetInfo['thumbnails']['high']['url']
 
         video_list.append({"video_id":video_id,"video_thumbnail_url":thumbnail,"video_title":title})
 
