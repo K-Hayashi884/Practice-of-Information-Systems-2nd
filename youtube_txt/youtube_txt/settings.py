@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 	
 from .setting_secret import *
 from pathlib import Path
+from django.core.management.utils import get_random_secret_key
+SECRET_KEY = get_random_secret_key()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,10 +26,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-r%5j+rl9+kq+vra*j8uhah5l1tbciiqn9xty6jo1v3)iy6=@4t"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ["*"]
-
+ALLOWED_HOSTS = ['localhost', '.pythonanywhere.com', 'yu0ki.pythonanywhere.com']
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 
 # Application definition
 
