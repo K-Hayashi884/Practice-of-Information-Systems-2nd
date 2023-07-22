@@ -23,6 +23,8 @@ from .youtube_api import search
 from apiclient.discovery import build
 from django.conf import settings
 
+import requests
+
 
 @api_view(['GET'])
 @permission_classes((AllowAny, ))
@@ -253,3 +255,25 @@ def getUserId(request):
     token = request.META['HTTP_AUTHORIZATION'].split(" ")[1]
     user = Token.objects.get(key=token).user
     return user.pk
+
+
+# 裏方作業自動化用
+# Videoモデルに保存されている全ての動画の目次を取得し
+# 一括でHeadlineモデルに保存する
+@api_view(["GET"])
+def get_all_indices(request):
+    videos = Video.objects.all()
+    for video in videos:
+        # リクエストに含めるヘッダーを指定します
+        headers = {
+            'Authorization': 'Token 1ede3a6d0239cc3a0e3e77e53ddec064e086bd21',  # 任意の認証トークンを指定
+        }
+        # HTTP POSTリクエストを送信します（他にもGETやPUTなどがあります）
+        response = requests.get("http://127.0.0.1:8000/index/" + video.video_id + "/", headers=headers)
+
+
+        # レスポンスを表示します
+        print(response.status_code)
+        print(response.json())
+
+    return Response("all videos now have indices!", status=201)
