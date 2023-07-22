@@ -151,30 +151,31 @@ def getHeadlines(request, k):
             )
             new_headline.save()
         
-        # Videoモデルにも情報を追加
-        # YouTube Data APIのクライアントを作成
-        youtube = build('youtube', 'v3', developerKey=settings.YOUTUBE_API_KEY)
+        # もしまだであれば、Videoモデルにも情報を追加
+        if Video.objects.filter(video_id=k) == []:
+            # YouTube Data APIのクライアントを作成
+            youtube = build('youtube', 'v3', developerKey=settings.YOUTUBE_API_KEY)
 
-        # 動画の情報を取得します
-        response = youtube.videos().list(
-            part='snippet,statistics',
-            id=k
-        ).execute()
+            # 動画の情報を取得します
+            response = youtube.videos().list(
+                part='snippet,statistics',
+                id=k
+            ).execute()
 
-        # 必要な情報を抽出します
-        video_data = response['items'][0]
-        video_id = video_data['id']
-        video_title = video_data['snippet']['title']
-        video_thumbnail_url = video_data['snippet']['thumbnails']['default']['url']
-        video_count = video_data['statistics']['viewCount']
+            # 必要な情報を抽出します
+            video_data = response['items'][0]
+            video_id = video_data['id']
+            video_title = video_data['snippet']['title']
+            video_thumbnail_url = video_data['snippet']['thumbnails']['default']['url']
+            video_count = video_data['statistics']['viewCount']
 
-        # ビデオオブジェクトを作成し、保存します
-        Video.objects.create(
-            video_id=video_id,
-            video_title=video_title,
-            video_thumbnail_url=video_thumbnail_url,
-            video_count=video_count
-        )
+            # ビデオオブジェクトを作成し、保存します
+            Video.objects.create(
+                video_id=video_id,
+                video_title=video_title,
+                video_thumbnail_url=video_thumbnail_url,
+                video_count=video_count
+            )
 
         # timestampをstringに直したバージョンを作成
         indices = floated_indices

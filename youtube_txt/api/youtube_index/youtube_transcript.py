@@ -76,9 +76,12 @@ def videoid_to_index(video_id: str):
 # video_idを受け取り、目次を生成する
 # タイムスタンプをfloatで保存
 def videoid_to_floated_index(video_id: str):
-    transcript_list = get_youtube_transcript(video_id=video_id)
-
-    indices = transcript_data_to_index(transcript_data=transcript_list)
+    try:
+        transcript_list = get_youtube_transcript(video_id=video_id)
+        indices = transcript_data_to_index(transcript_data=transcript_list)
+    except Exception:
+        # 字幕を利用できない動画は、目次を生成できない
+        indices = [{"timestamp": 0, "headline": "この動画は字幕を取得できないため、未対応です"}]
 
     # { “video”: dict
     #     {“id”: 動画のid, (string)
