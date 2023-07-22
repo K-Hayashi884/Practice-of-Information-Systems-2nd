@@ -107,7 +107,7 @@ def getVideos(request):
 def getHeadlines(request, k):
     headlines = Headline.objects.filter(video_id=k).order_by('timestamp')
     
-    if headlines.exists():
+    if headlines.exists() and headlines[0].headline != "この動画は字幕を取得できないため、未対応です":
         # 目次データを整形
         indices_data = []
         for headline in headlines:
@@ -145,13 +145,24 @@ def getHeadlines(request, k):
         # option: 時刻リンクを含むコメントを追加
 
         # DBに上記の内容を保存
-        for index in floated_indices["video"]["indices"]:
-            new_headline = Headline(
-                video_id=k,
-                timestamp=index["timestamp"],
-                headline=index["headline"],
-            )
-            new_headline.save()
+        if floated_indices["video"]["indices"][0]["headline"] != "この動画は字幕を取得できないため、未対応です":
+            Headline.objects.filter(video_id=k).delete()
+            for index in floated_indices["video"]["indices"]:
+                new_headline = Headline(
+                    video_id=k,
+                    timestamp=index["timestamp"],
+                    headline=index["headline"],
+                )
+                new_headline.save()
+        else:
+            if not headlines.exists():
+                index = floated_indices["video"]["indices"][0]
+                new_headline = Headline(
+                    video_id=k,
+                    timestamp=index["timestamp"],
+                    headline=index["headline"],
+                )
+                new_headline.save()
         
         # もしまだであれば、Videoモデルにも情報を追加
         if Video.objects.filter(video_id=k) == []:

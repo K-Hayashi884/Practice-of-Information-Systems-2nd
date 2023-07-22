@@ -30,7 +30,7 @@ def transcript_data_to_index(transcript_data: list):
     openai.api_key = OPENAI_API_KEY
     eval_lists = []
 
-    # 長すぎる入力をカット（3分ごとにカット）
+    # 長すぎる入力をカット（5分ごとにカット）
     splitted_strings = []
     full_string = ""
     tmp_text = ""
@@ -38,7 +38,7 @@ def transcript_data_to_index(transcript_data: list):
     for t in transcript_data:
         tmp_text += t["text"].replace("[音楽]", "")
         full_string += t["text"].replace("[音楽]", "")
-        if int(t["start"]) / 180 > split_second_counter and len(tmp_text) > 200:
+        if int(t["start"]) / 300 > split_second_counter and len(tmp_text) > 200:
             splitted_strings.append(tmp_text)
             tmp_text = ""
             split_second_counter += 1
@@ -115,7 +115,11 @@ def transcript_data_to_index(transcript_data: list):
     prev_max_id = 0
     for split_info in eval_lists:
         # split_infoは{\"start_text\": , \"end_text\": , \"headline\": }形式
-        split_start = split_info["start_text"]
+        try:
+            split_start = split_info["start_text"]
+            split_headline = split_info["headline"]
+        except Exception:
+            continue
         
         # 共通部分文字列長が最も長いテキストを含む時刻を、対応する時刻とする
         max_id = 0
@@ -136,10 +140,11 @@ def transcript_data_to_index(transcript_data: list):
   
         # print(max_id, len(transcript_data))
         prev_max_id = max_id
-        time_headline_pairs.append(
-            {"timestamp": transcript_data[max_id]["start"],
-                "headline": split_info["headline"]}
-        )
+        if split_headline not in [item["headline"] for item in time_headline_pairs]:
+            time_headline_pairs.append(
+                {"timestamp": transcript_data[max_id]["start"],
+                    "headline": split_headline}
+            )
         # i = max_id + 1
 
     print("## time headline pairs")
