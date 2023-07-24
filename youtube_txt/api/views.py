@@ -220,12 +220,13 @@ class LaterListAPI(APIView):
     def post(self, request):
         user_id = getUserId(request)
         video_id = request.data.get('video_id')
+        print(video_id)
         try:
             video_id = Video.objects.get(video_id=video_id)
             user_id = User.objects.get(id=user_id)
             later_list = LaterList.objects.filter(user_id=user_id, video_id=video_id)
             if later_list.exists():
-                return Response("Video is already in the later list.", status=status.HTTP_400_BAD_REQUEST)
+                return Response("Video is already in the later list.", status=status.HTTP_406_NOT_ACCEPTABLE)
 
             later = LaterList.objects.create(user_id=user_id, video_id=video_id)
 
@@ -242,7 +243,6 @@ class LaterListAPI(APIView):
     def delete(self, request):
         user_id = getUserId(request)
         video_id = request.GET.get('video_id', '')
-        print(video_id)
         # video_id = request.data.get('video_id')
         try:
             video_id = Video.objects.get(video_id=video_id)
