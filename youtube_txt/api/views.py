@@ -82,7 +82,7 @@ def getVideos(request):
     search_query = request.GET.get('search_query', '')
     print(search_query)
     if not search_query:
-        videos = Video.objects.all()[:10]
+        videos = Video.objects.all()# [:10]
         serializer = VideoSerializer(videos, many=True)
         return Response(serializer.data)
     else:
@@ -241,7 +241,9 @@ class LaterListAPI(APIView):
         
     def delete(self, request):
         user_id = getUserId(request)
-        video_id = request.data.get('video_id')
+        video_id = request.GET.get('video_id', '')
+        print(video_id)
+        # video_id = request.data.get('video_id')
         try:
             video_id = Video.objects.get(video_id=video_id)
             user_id = User.objects.get(id=user_id)
